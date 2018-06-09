@@ -18,7 +18,7 @@ router.get( '/teachers', (req, res, next) => {
 	});
 });
 
-//Creating Student
+//Creating new Student
 router.post('/studentregister', (req, res, next) => {
 	let newStudent = new StudentRegister({
 		firstname: req.body.firstname,
@@ -51,6 +51,7 @@ router.post('/studentregister', (req, res, next) => {
 		password: req.body.password,
 		dob: req.body.dob,
 		gender: req.body.gender,
+		category: req.body.category,
 		skills: req.body.skills,
 		bio: req.body.bio
 	});
