@@ -1,25 +1,25 @@
 const express = require("express");
 const router = express.Router();
-
+var MongoClient = require('mongodb').MongoClient;
 const StudentRegister = require('../models/studentregistation');
 const TeacherRegister = require('../models/teacherregistation');
 
-//retreving students data
-router.get( '/students', (req, res, next) => {
-	StudentRegister.find(function(err, students){
-		res.json(students);
-	});
-});
+const url = "mongodb://localhost:27017/";
 
-//retreving teachers data
-router.get( '/teachers', (req, res, next) => {
-	TeacherRegister.find(function(err, teachers){
-		res.json(teachers);
+router.get( '/students', (req, response, next) => {
+	MongoClient.connect(url, function(err, db) {
+	  if (err) throw err;
+	  var dbo = db.db("eduket");
+	  dbo.collection("students").find({}).toArray(function(err, result) {
+	    if (err) throw err;
+	    response.json(result);
+	    db.close();
+	  });
 	});
 });
 
 //Creating new Student
-router.post('/studentregister', (req, res, next) => {
+router.post('/studentregister', (req, response, next) => {	
 	let newStudent = new StudentRegister({
 		firstname: req.body.firstname,
 		lastname: req.body.lastname,
@@ -31,12 +31,33 @@ router.post('/studentregister', (req, res, next) => {
 		gender: req.body.gender
 	});
 
-	newStudent.save((err, student)=> {
-		if(err) {
-			res.json({msg: `Failed to store student`});
-		} else {
-			res.json({msg: `Contact saved successfully ${JSON.stringify(student)}`});
-		}
+	MongoClient.connect(url, function(err, db) {
+	  if (err) throw err;
+	  var dbo = db.db("eduket");
+	  
+	  dbo.collection("students").insertOne(newStudent, function(err, res) {
+	    if (err) throw err;
+	    console.log(res);
+	    response.json(res);	    
+	    db.close();
+	  });
+	});
+});
+
+//student authorization 
+router.post('/slogin', (req, response , next) => {
+	console.log(req.body.username);
+
+	MongoClient.connect(url, function(err, db) {
+	  if (err) throw err;
+	  var dbo = db.db("eduket");
+	  var myobj = { username: req.body.username, password: req.body.password };
+	  console.log(myobj);
+	  dbo.collection("students").find(myobj).toArray(function(err, result) {
+	    if (err) throw err;
+	    response.json(result);
+	    db.close();
+	  });
 	});
 });
 
