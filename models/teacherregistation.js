@@ -24,14 +24,6 @@ const TeacherRegisterSchema = mongoose.Schema({
 	password: {
 		type: String,
 		required: true
-	},	
-	dob: {
-		type: String,
-		required: true
-	},
-	gender: {
-		type: String,
-		required: true
 	},
 	skills: {
 		type: Array,
