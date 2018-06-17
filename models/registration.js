@@ -1,40 +1,49 @@
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt-nodejs");
-const StudentRegisterSchema = mongoose.Schema({
+const RegisterSchema = mongoose.Schema({
 	firstname: {
 		type: String,
 		required: true,
-		lowercase: true		
 	},
 	lastname: {
 		type: String,
-		required: true,
-		lowercase: true
+		required: true
+	},
+	type: {
+		type: String,
+		required: true
 	},
 	phone: {
 		type: String,
 		required: true,
-		unique: true,		
+		unique: true
 	},
 	email: {
 		type: String,
 		required: true,
-		unique: true,
-		lowercase: true
+		unique: true
 	},
 	username: {
 		type: String,
 		required: true,
-		unique: true,
-		lowercase: true
+		lowercase: true,
+		unique: true		
 	},	
 	password: {
 		type: String,
 		required: true
+	},
+	skills: {
+		type: String,
+		reuired: true
+	},
+	bio: {
+		type: String,
+		required: false
 	}
 });
 
-StudentRegisterSchema.pre('save' , function(next) {
+RegisterSchema.pre('save' , function(next) {
 	if(!this.isModified('password')){
 		return next();
 	}
@@ -48,7 +57,7 @@ StudentRegisterSchema.pre('save' , function(next) {
 	});
 });
 
-StudentRegisterSchema.methods.comparePassword = function(password) {			
+RegisterSchema.methods.comparePassword = function(password) {			
 	if(this.password != null) {		
         return bcrypt.compareSync(password, this.password);
     } else {
@@ -56,4 +65,4 @@ StudentRegisterSchema.methods.comparePassword = function(password) {
     }	
 }
 
-module.exports = mongoose.model('StudentRegister', StudentRegisterSchema);
+const Registration = module.exports = mongoose.model('Registration', RegisterSchema);
